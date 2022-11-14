@@ -1,0 +1,31 @@
+# Local/private config goes in the include
+[include]
+  path = ~/.gitconfig.local
+
+[alias]
+  logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+
+[core]
+  excludesfile = ~/.gitignore
+  editor = vim
+  pager = delta --plus-color="#012800" --minus-color="#340001" --theme='Monokai Extended'
+
+[interactive]
+	diffFilter = delta --color-only
+
+[commit]
+  gpgsign = true
+
+[gpg]
+  program = gpg
+
+[credential]
+  helper = osxkeychain
+
+[init]
+  defaultBranch = main

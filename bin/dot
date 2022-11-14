@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # dot
 #
@@ -49,6 +49,10 @@ $ZSH/homebrew/install.sh 2>&1
 # Upgrade homebrew
 echo "› brew update"
 brew update
+
+# Upgrade homebrew
+echo "› brew install Brewfile"
+brew install $ZSH/homebrew/Brewfile 2>&1
 
 # Install software
 echo "› $ZSH/script/install"
