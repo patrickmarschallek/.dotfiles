@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ -z "$1" ]]
+then
+  echo "Please provide a filename for an mp4 or mov file"
+fi
+file=$1
+fileName=$(echo $file | cut -f 1 -d '.')
+ffmpeg -i $file $fileName.gif
