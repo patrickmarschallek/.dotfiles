@@ -4,7 +4,7 @@ A modular, organized dotfiles repository for macOS development environment setup
 
 ## 🚀 Quick Start
 
-### **🌐 Remote Installation (Recommended for Fresh Machines)**
+### **🌐 Remote Installation (Recommended)**
 ```bash
 # One-command installation with automatic restart handling
 curl -fsSL https://raw.githubusercontent.com/patrickmarschallek/.dotfiles/main/install-remote.sh | bash
@@ -12,28 +12,18 @@ curl -fsSL https://raw.githubusercontent.com/patrickmarschallek/.dotfiles/main/i
 - ✅ **Handles macOS updates** and restart cycles automatically
 - ✅ **Resumes installation** after reboots until complete
 - ✅ **Sets up daily update checking** automatically
-- 📖 **Full guide**: [REMOTE_INSTALL.md](REMOTE_INSTALL.md)
 
 ### **📂 Manual Installation**
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/patrickmarschallek/.dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
-
-# Bootstrap symlinks
-./bootstrap
-
-# Install everything
-./install
-
-# Or use the management command
-bin/dot
+./bootstrap && ./install
 ```
 
-## 📁 Project Structure
+## 📁 Architecture & Structure
 
 ### Core Components (Installation Order)
-
 ```
 00_macos/          # macOS system defaults and settings
 01_homebrew/       # Package manager and applications
@@ -50,175 +40,262 @@ bin/dot
 06_pyenv/          # Python version management
 07_pipenv/         # Python package management
 07_poetry/         # Python dependency management
+08_ai_tools/       # AI development tools (Ollama, WebUI)
 work/              # Work-specific configurations (git submodule)
 ```
 
-### Supporting Files
-
+### Key Files
 ```
 bin/dot            # Main management command
 bootstrap          # Symlink creation script
 install            # Run all install scripts
 helper.sh          # Utility functions for scripts
 functions/         # Shell utility functions
-CLAUDE.md          # AI assistant guidance
-PATTERN_ANALYSIS.md # Project structure analysis
 ```
+
+### Directory Patterns
+- **Numbered prefixes**: `00_`, `01_`, `02_`, etc. for installation order
+- **Descriptive names**: Clear indication of purpose
+- **Grouping logic**: Similar tools grouped in same number range
+- **Symlink files**: `*.symlink` files automatically linked to `~/.{filename}`
 
 ## 🛠️ Key Features
 
-### **Automated Installation**
-- **Numbered directories** ensure proper installation order
-- **Modular design** allows installing specific components
-- **Idempotent scripts** can be run multiple times safely
-
-### **Application Management**
-- **Homebrew integration** with comprehensive Brewfile
-- **Installation checking** prevents duplicate downloads
-- **Interactive prompts** for missing applications
+### **Automated Installation System**
+- **Modular components** with individual `install.sh` scripts
+- **Idempotent execution** - can be run multiple times safely
+- **Error handling** with comprehensive logging
+- **Resume capability** for interrupted installations
 
 ### **Development Environment**
-- **Java multi-version support** (8, 11, 17, 21) via Eclipse Temurin
-- **Python environment management** via pyenv, pipenv, poetry
-- **Node.js setup** with version management
-- **Container development** with Colima + Docker
+- **Multi-language support**: Java (8,11,17,21), Python, Node.js
+- **Container development**: Colima + Docker without Docker Desktop
+- **AI tools**: Ollama local LLMs + Open WebUI interface
+- **Package management**: Homebrew with 40+ packages
 
-### **Shell Enhancement**
-- **Zsh configuration** with oh-my-zsh
-- **Custom aliases and functions** for productivity
-- **PATH management** across all tools
-- **Work/personal separation** via git submodule
+### **Work/Personal Separation**
+- **Git submodule** for work-specific configurations
+- **Security-first approach** - corporate configs stay private
+- **Independent versioning** with separate repositories
 
-## 📋 Installation Components
+## 🎯 Tool Registry & Discovery
 
-### **System & Core Tools**
-- **macOS defaults** and system settings
-- **Homebrew** with 40+ packages and applications
-- **Terminal setup** (Hyper, fonts, themes)
-
-### **Development Applications**
-- **IDEs**: IntelliJ IDEA, DataGrip, Visual Studio Code
-- **Tools**: Postman, Obsidian
-- **Container runtime**: Colima with Docker compatibility
-
-### **Development Languages**
-- **Java**: Eclipse Temurin 8, 11, 17, 21 with jenv management
-- **Python**: pyenv + pipenv + poetry for complete environment management
-- **Node.js**: nvm integration for version management
-
-### **Version Control**
-- **Git configuration** with aliases and shortcuts
-- **GPG setup** for commit signing
-- **GitHub CLI** integration
-
-## 🎯 Usage Examples
-
-### **Daily Management**
-```bash
-bin/dot                    # Update system and run all installers
-bin/dot --edit            # Open dotfiles for editing
-bin/dot --help            # Show help
-dotfiles-registry summary # Overview of all available tools
-```
-
-### **Application Management**
-```bash
-brewcheck                 # Check which apps are installed
-brew-install-missing      # Interactive install of missing apps
-brewupdate               # Update all packages
-```
-
-### **Container Development**
-```bash
-clm-start                # Start Colima with optimal settings
-clm-status               # Show comprehensive status
-clm-socket check         # Verify Docker socket configuration
-clm-upgrade upgrade      # Update Colima and recreate VM
-```
-
-### **Java Development**
-```bash
-jenv versions            # List available Java versions
-jenv global 17.0         # Set global Java version
-jenv local 11.0          # Set project-specific version
-```
-
-## 🔧 Advanced Features
-
-### **Colima Container Runtime**
-- **Docker compatibility** without Docker Desktop overhead
-- **Multiple profiles** for different development needs
-- **Testcontainers integration** with proper environment variables
-- **Socket management** for tool compatibility
-- **Upgrade and maintenance** helpers
-
-### **Shell Integration**
-- **Automatic environment setup** for all development tools
-- **Custom aliases** for frequently used commands
-- **PATH management** ensures correct tool priorities
-- **Work-specific overrides** via git submodule
-
-### **Work Environment Separation**
-- **Private git repository** (`work/`) for company-specific configurations
-- **Security-first approach** - work configs never touch public repository
-- **Independent versioning** with separate corporate GitHub repository
-- **Automatic integration** during installation and daily workflows
-
-## 📖 Component Details
-
-### **Homebrew (01_homebrew/)**
-- **Comprehensive Brewfile** with development tools
-- **Installation verification** prevents duplicate downloads
-- **Package management** helpers and aliases
-
-### **Java Environment (05_java/)**
-- **Multiple JDK versions** (8, 11, 17, 21) via Eclipse Temurin
-- **jenv integration** for seamless version switching
-- **Automatic registration** of all installed versions
-
-### **Container Development (04_colima/)**
-- **Colima runtime** with Docker API compatibility
-- **Helper scripts** for common operations
-- **Testcontainers support** with proper environment variables
-- **Upgrade and maintenance** automation
-
-### **Python Development (06_pyenv/ + 07_pipenv/ + 07_poetry/)**
-- **pyenv** for Python version management
-- **pipenv** for virtual environments and dependency management
-- **poetry** for modern Python project management
-
-## 🤝 Contributing
-
-1. **Follow the numbered directory pattern** for installation order
-2. **Include install.sh** in each component directory
-3. **Use helper.sh functions** (`info`, `success`, `fail`) for consistent output
-4. **Add *.zsh files** for shell integration
-5. **Test installation** on fresh system before committing
-
-## 📚 Documentation
-
-- **REMOTE_INSTALL.md** - Complete guide for one-command installation on fresh machines
-- **TOOLS_REGISTRY.md** - Comprehensive registry of all available tools, aliases, and functions
-- **QUICK_REFERENCE.md** - Daily command cheat sheet for common operations
-- **WORK_SUBMODULE_GUIDE.md** - Security guide for managing work-specific configurations
-- **CLAUDE.md** - Guidance for AI assistants working with this repository
-- **PATTERN_ANALYSIS.md** - Detailed analysis of project structure and patterns
-- **Individual component READMEs** - Component-specific documentation
-
-### **🔍 Tool Discovery**
+### **Interactive Discovery**
 ```bash
 dotfiles-registry          # Interactive tool discovery
 dotfiles-registry summary  # Quick overview of all tools
 dotfiles-registry search X # Find tools containing X
 ```
 
+### **Key Tool Categories**
+
+#### **🍺 Package Management**
+```bash
+brewcheck                 # Check installation status
+brew-install-missing      # Interactive install missing apps
+brewupdate               # Update all packages
+brewclean                # Clean unused packages
+```
+
+#### **🐳 Container Development**
+```bash
+clm-start                # Start Colima with optimal settings
+clm-status               # Comprehensive status check
+clm-restart              # Restart Colima
+clm-upgrade upgrade      # Update Colima and recreate VM
+```
+
+#### **🤖 AI Development**
+```bash
+ai-start                 # Start complete AI environment
+ai-status                # AI tools status check
+ai-chat                  # Interactive chat with models
+cc                       # Claude Code AI assistant
+```
+
+#### **☕ Java Development**
+```bash
+jenv versions            # List available Java versions
+jenv global 17.0         # Set global Java version
+jenv local 11.0          # Set project-specific version
+```
+
+## 📋 Daily Usage
+
+### **System Management**
+```bash
+bin/dot                  # Update everything
+bin/dot --edit           # Open dotfiles for editing
+source ~/.zshrc          # Reload shell configuration
+```
+
+### **Most Used Commands**
+```bash
+# Container development
+clm-start && clm-status
+
+# Package management
+brewcheck && brew-install-missing
+
+# Java projects
+jenv local 17.0 && mvn clean install
+
+# AI development
+ai-start && ai-chat
+```
+
+### **Weekly Maintenance**
+```bash
+brewupdate              # Update packages
+brewlock-update         # Update lock file
+clm-upgrade upgrade      # Update Colima
+bin/dot                  # Full system update
+```
+
+## 🚀 Remote Installation System
+
+### **How It Works**
+1. **System Check** - Verifies macOS and installs Xcode tools
+2. **Repository Setup** - Clones dotfiles to `~/.dotfiles`
+3. **Resume Mechanism** - Sets up automatic resume via Launch Agent
+4. **Installation** - Runs `bin/dot` for complete setup
+5. **Restart Handling** - Manages macOS updates automatically
+6. **Completion** - Cleans up resume mechanism
+
+### **Restart Handling**
+- **macOS Update Detection** - Identifies when updates require restart
+- **Automatic Resume** - Continues after reboot via Launch Agent
+- **Progress Preservation** - Maintains state across restarts
+- **Graceful Cleanup** - Removes resume mechanism when complete
+
+### **Timeline**
+- **Initial Setup**: 2-5 minutes
+- **First Phase**: 5-10 minutes (Homebrew, packages)
+- **macOS Updates**: 5-30 minutes (varies)
+- **Final Phase**: 2-5 minutes
+- **Total**: 15-50 minutes depending on updates
+
+## 🏢 Work Environment Management
+
+### **Architecture**
+```
+~/.dotfiles/                    # Main public repository
+└── work/                       # Private submodule
+    ├── 09_zsh/                 # Work shell overrides
+    ├── 10_ssh/                 # Corporate SSH configs
+    ├── 11_git/                 # Work Git settings
+    ├── 12_gh/                  # Corporate GitHub CLI
+    ├── 15_node/                # Corporate npm configs
+    └── 15_company_tools/       # Company-specific tools
+```
+
+### **Security Best Practices**
+- ✅ **Main dotfiles**: Public repository
+- ✅ **Work configs**: Private corporate repository
+- ✅ **No cross-contamination**: Work secrets never touch public repo
+- 🔐 **Corporate authentication** required for work repository
+
+### **Daily Workflow**
+```bash
+# Update both repositories
+cd ~/.dotfiles && git pull
+cd ~/.dotfiles/work && git pull
+
+# Or use main management command
+bin/dot  # Updates both automatically
+```
+
+## 📊 Pattern Analysis
+
+### **Consistency Scores**
+- **Directory numbering**: 100% ✅
+- **File naming conventions**: 95% ✅
+- **Symlink patterns**: 100% ✅
+- **Install script presence**: 93% (14/15) 🟡
+- **Helper integration**: 60% 🟠
+
+### **Identified Areas for Improvement**
+1. **Missing install.sh** in `03_zsh/` directory
+2. **Script header variations** across components
+3. **Inconsistent helper.sh usage** in older scripts
+4. **Mixed error handling** approaches
+
+### **Strengths**
+- **Clear organization** with numbered directories
+- **Modular design** for easy extension
+- **Work separation** maintains security
+- **Modern additions** follow best practices
+
+## 🔍 Troubleshooting
+
+### **Remote Installation Issues**
+```bash
+# Check resume status
+bin/dotfiles-resume status
+
+# Check installation log
+tail -f ~/.dotfiles-install.log
+
+# Manual cleanup if needed
+bin/dotfiles-resume cleanup
+```
+
+### **Container Issues**
+```bash
+clm-trouble system-info    # Show system information
+clm-trouble logs          # Show Colima logs
+clm-trouble reset         # Reset and clean restart
+```
+
+### **General Debugging**
+```bash
+brewcheck                 # Verify app installations
+clm-status               # Check container environment
+ai-status                # Check AI tools
+dotfiles-registry tools   # Check tool installation status
+```
+
+## 🤝 Contributing
+
+### **Adding New Components**
+1. **Follow numbered directory pattern** for installation order
+2. **Include install.sh** with proper error handling
+3. **Use helper.sh functions** (`info`, `success`, `fail`)
+4. **Add *.zsh files** for shell integration
+5. **Test on fresh system** before committing
+
+### **Pattern Compliance**
+- Use consistent script headers
+- Implement proper error handling with `set -e`
+- Integrate with `helper.sh` utility functions
+- Follow naming conventions for aliases and functions
+
 ## ✅ System Requirements
 
 - **macOS** (tested on recent versions)
 - **Bash/Zsh shell**
-- **Internet connection** for downloading packages
+- **Internet connection** for package downloads
 - **Administrator privileges** for some installations
+
+## 📚 Advanced Topics
+
+### **Symlink Management**
+- Files ending in `.symlink` are automatically linked to `~/.{filename}`
+- Bootstrap script handles creation with interactive prompts
+- Helper functions manage backups and overwrites
+
+### **Environment Variables**
+- `DOCKER_HOST` - Points to Colima socket
+- `TESTCONTAINERS_*` - Configured for Colima
+- `JAVA_HOME` - Managed by jenv
+- `DOTFILES` - Set to `$HOME/.dotfiles`
+
+### **Shell Integration**
+- PATH management across all tools
+- Automatic loading of aliases and functions
+- Environment setup for development tools
+- Work overrides applied automatically
 
 ---
 
-*This dotfiles repository provides a complete, modular development environment setup with strong organizational patterns and extensive automation.*
+*This dotfiles repository provides a complete, modular development environment setup with strong organizational patterns, extensive automation, and comprehensive tool integration for modern macOS development workflows.*
