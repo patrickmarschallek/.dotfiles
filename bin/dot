@@ -66,3 +66,15 @@ fi
 # Install software
 echo "› $DOTFILES/install"
 $DOTFILES/install
+
+# Check for macOS updates that might require restart
+if command -v softwareupdate &> /dev/null; then
+    echo "› checking for macOS updates"
+    if softwareupdate -l 2>/dev/null | grep -q "restart"; then
+        echo "⚠️  macOS updates require restart"
+        echo "Installation will resume automatically after reboot if resume mechanism is active"
+        echo "Run 'bin/dotfiles-resume status' to check resume configuration"
+    else
+        echo "✅ no macOS updates requiring restart"
+    fi
+fi

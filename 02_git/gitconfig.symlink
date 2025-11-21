@@ -1,0 +1,41 @@
+# Local/private config goes in the include
+[include]
+  path = ~/.gitconfig.local
+
+[alias]
+  logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+
+[core]
+  excludesfile = ~/.gitignore
+  editor = vim
+#  pager = delta --syntax-theme='Monokai Extended'
+
+[interactive]
+#  diffFilter = delta --color-only
+
+[delta]
+  line-numbers = true
+  side-by-side = true
+
+[commit]
+  gpgsign = true
+
+[gpg]
+  program = gpg
+
+[credential]
+  helper = osxkeychain
+
+[init]
+  defaultBranch = main
+[user]
+	name = Patrick Marschallek
+	email = patrick.marschallek@company.de
+	signingkey = E0778CAD2A53D3F0
+[url "ssh://git@internal-git-server/"]
+	insteadOf = https://internal-git-server/

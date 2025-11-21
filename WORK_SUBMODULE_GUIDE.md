@@ -10,7 +10,7 @@ This setup allows you to:
 - **Maintain separate versioning** for personal vs work configurations
 - **Ensure security** by preventing accidental exposure of corporate information
 
-## 🏗️ Current Architecture
+## 🏗️ Architecture Pattern
 
 ```
 ~/.dotfiles/                    # Main public repository
@@ -23,16 +23,16 @@ This setup allows you to:
     ├── 11_git/                 # Work Git settings
     ├── 12_gh/                  # Corporate GitHub CLI
     ├── 15_node/                # Corporate npm configs
-    └── 15_company-cli_tools/   # Company-specific tools
+    └── 15_company_tools/       # Company-specific development tools
 ```
 
 ## 🔧 Setup Instructions
 
-### **1. Initial Setup (Already Done)**
-Your work directory is already configured as a separate git repository:
-- **Private Remote**: `https://github.com/patrick-marschallek_zse/.dotfiles.git`
+### **1. Initial Setup**
+Set up your work directory as a separate git repository:
+- **Private Remote**: Your corporate GitHub or internal Git server
 - **Separate Versioning**: Independent commits from main dotfiles
-- **Private Access**: Only accessible within corporate network
+- **Private Access**: Only accessible to authorized team members
 
 ### **2. Proper Submodule Registration**
 
@@ -45,8 +45,8 @@ cd ~/.dotfiles
 # Remove work directory from staging (if present)
 git rm --cached work 2>/dev/null || true
 
-# Add as proper submodule
-git submodule add https://github.com/patrick-marschallek_zse/.dotfiles.git work
+# Add as proper submodule (replace with your work repository URL)
+git submodule add https://your-corporate-git-server/your-username/work-dotfiles.git work
 
 # Commit the submodule configuration
 git add .gitmodules work
@@ -67,8 +67,8 @@ git commit -m "Ignore work directory - managed independently"
 ## 🔒 Security Best Practices
 
 ### **Repository Separation**
-- ✅ **Main dotfiles**: Public repository (github.com)
-- ✅ **Work configs**: Private corporate repository (internal-git-server)
+- ✅ **Main dotfiles**: Public repository (GitHub, GitLab, etc.)
+- ✅ **Work configs**: Private corporate repository (internal Git server)
 - ✅ **No cross-contamination**: Work secrets never touch public repo
 
 ### **Access Control**
@@ -130,7 +130,7 @@ git push origin main
 ### **Option 1: Clone with Submodule (Formal Setup)**
 ```bash
 # Clone main repository with work submodule
-git clone --recurse-submodules https://github.com/patrickmarschallek/.dotfiles.git ~/.dotfiles
+git clone --recurse-submodules https://github.com/your-username/.dotfiles.git ~/.dotfiles
 
 # Install everything
 cd ~/.dotfiles
@@ -140,11 +140,11 @@ cd ~/.dotfiles
 ### **Option 2: Independent Clone (Current Setup)**
 ```bash
 # Clone main public repository
-git clone https://github.com/patrickmarschallek/.dotfiles.git ~/.dotfiles
+git clone https://github.com/your-username/.dotfiles.git ~/.dotfiles
 
-# Clone work repository separately
+# Clone work repository separately (replace with your work repository URL)
 cd ~/.dotfiles
-git clone https://github.com/patrick-marschallek_zse/.dotfiles.git work
+git clone https://your-corporate-git-server/your-username/work-dotfiles.git work
 
 # Install everything
 ./install
@@ -239,7 +239,7 @@ git reset --hard origin/main
 
 Your `dotfiles-registry` tool automatically discovers work tools:
 ```bash
-dotfiles-registry tools        # Shows both main and work tools
+dotfiles-registry tools          # Shows both main and work tools
 dotfiles-registry search company # Finds corporate tools
 ```
 
