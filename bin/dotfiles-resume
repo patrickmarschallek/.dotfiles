@@ -35,6 +35,32 @@ warn() {
     echo -e "${YELLOW}⚠️  $1${NC}" | tee -a "$INSTALL_LOG"
 }
 
+# Open terminal window for installation
+open_terminal_for_installation() {
+    local script_to_run="$1"
+
+    # Check if Hyper is installed and available
+    if command -v hyper &> /dev/null || [ -d "/Applications/Hyper.app" ]; then
+        log "Opening Hyper terminal for installation..."
+        # Use Hyper to run the script
+        if [ -d "/Applications/Hyper.app" ]; then
+            open -a "Hyper" --args -e "$script_to_run"
+        else
+            # If hyper command exists, use it
+            hyper -e "$script_to_run" &
+        fi
+    else
+        log "Opening Terminal.app for installation..."
+        # Use built-in Terminal.app
+        osascript << EOF
+tell application "Terminal"
+    activate
+    do script "$script_to_run"
+end tell
+EOF
+    fi
+}
+
 # Show usage
 show_usage() {
     echo "dotfiles-resume -- Handle automatic installation resume"
@@ -105,33 +131,44 @@ run_resume() {
 
     log "Resuming dotfiles installation after restart..."
 
-    # Change to dotfiles directory and run dot
-    cd "$DOTFILES_DIR"
+    # Create a completion script that will be run in the terminal
+    local completion_script="$DOTFILES_DIR/bin/dotfiles-installation-complete"
+    cat > "$completion_script" << 'EOF'
+#!/usr/bin/env bash
+# This script is run after the installation completes in the terminal
 
-    # Run the main installation
-    log "Running bin/dot..."
-    bin/dot
+COMPLETION_FILE="$HOME/.dotfiles-installation-complete"
+DOTFILES_DIR="$HOME/.dotfiles"
 
-    # Check if we need another restart (macOS updates pending)
-    if softwareupdate -l 2>/dev/null | grep -q "restart"; then
-        warn "macOS updates require restart, will resume after reboot..."
-        log "Scheduling restart in 60 seconds..."
+# Mark installation as complete
+touch "$COMPLETION_FILE"
+echo "✅ Dotfiles installation completed successfully!"
 
-        # Schedule restart
-        sudo shutdown -r +1 "Restarting for macOS updates. Dotfiles installation will resume automatically." 2>/dev/null || {
-            warn "Could not schedule restart automatically. Please restart manually."
-        }
-        exit 0
-    fi
+# Clean up resume mechanism
+"$DOTFILES_DIR/bin/dotfiles-resume" cleanup
 
-    # Mark installation as complete
-    touch "$COMPLETION_FILE"
-    success "Dotfiles installation completed successfully!"
+echo ""
+echo "🎉 Installation Summary:"
+echo "  • Dotfiles successfully installed"
+echo "  • Resume mechanism cleaned up"
+echo ""
+echo "🚀 Next steps:"
+echo "  1. Restart your terminal or run: source ~/.zshrc"
+echo "  2. Run 'dotfiles-registry summary' to see available tools"
+echo "  3. Run 'bin/dot' anytime to update"
+echo ""
+echo "Press any key to close this terminal..."
+read -n 1
+EOF
+    chmod +x "$completion_script"
 
-    # Clean up resume mechanism
-    cleanup_resume
+    # Open terminal window to run the installation interactively
+    log "Opening terminal window for interactive installation..."
+    open_terminal_for_installation "cd '$DOTFILES_DIR' && bin/dot && '$completion_script'"
 
-    log "Installation complete! Please restart your terminal or run: source ~/.zshrc"
+    # Exit the LaunchAgent - the terminal window will handle completion
+    log "Terminal opened for installation. LaunchAgent task complete."
+    exit 0
 }
 
 # Clean up resume mechanism
@@ -147,9 +184,10 @@ cleanup_resume() {
     # Remove completion marker
     rm -f "$COMPLETION_FILE"
 
-    # Clean up log files
+    # Clean up log files and temporary scripts
     rm -f "$HOME/.dotfiles-resume-error.log"
     rm -f "$HOME/.dotfiles-resume-output.log"
+    rm -f "$DOTFILES_DIR/bin/dotfiles-installation-complete"
 
     success "Resume mechanism cleaned up"
 }
