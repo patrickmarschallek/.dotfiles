@@ -38,13 +38,14 @@ while test $# -gt 0; do
 	shift
 done
 
-export ZSH=$HOME/.dotfiles
+export DOTFILES=$HOME/.dotfiles
 
 # Set macOS defaults
-$ZSH/macos/set-defaults.sh
+$DOTFILES/00_macos/set-defaults.sh
 
 # Install homebrew
-$ZSH/homebrew/install.sh 2>&1
+HOMEBREW_DIR=$DOTFILES/01_homebrew
+$HOMEBREW_DIR/install.sh 2>&1
 
 # Upgrade homebrew
 echo "› brew update"
@@ -52,8 +53,28 @@ brew update
 
 # Upgrade homebrew
 echo "› brew install Brewfile"
-brew install $ZSH/homebrew/Brewfile 2>&1
+brew bundle install --file="$HOMEBREW_DIR/Brewfile" 2>&1
+
+# Update work configurations if available
+if [ -d "$DOTFILES/work" ] && [ -d "$DOTFILES/work/.git" ]; then
+    echo "› updating work configurations"
+    cd "$DOTFILES/work"
+    git pull origin main 2>/dev/null || echo "  work configs update failed (may need authentication)"
+    cd "$DOTFILES"
+fi
 
 # Install software
-echo "› $ZSH/script/install"
-$ZSH/script/install
+echo "› $DOTFILES/install"
+$DOTFILES/install
+
+# Check for macOS updates that might require restart
+if command -v softwareupdate &> /dev/null; then
+    echo "› checking for macOS updates"
+    if softwareupdate -l 2>/dev/null | grep -q "restart"; then
+        echo "⚠️  macOS updates require restart"
+        echo "Installation will resume automatically after reboot if resume mechanism is active"
+        echo "Run 'bin/dotfiles-resume status' to check resume configuration"
+    else
+        echo "✅ no macOS updates requiring restart"
+    fi
+fi

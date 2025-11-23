@@ -1,0 +1,1 @@
+HOMEBREW_BUNDLE_FILE=~/.dotfiles/01_homebrew/Brewfile
