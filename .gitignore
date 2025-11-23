@@ -1,0 +1,52 @@
+# Dotfiles .gitignore
+
+# Work directory - managed as separate private repository
+# This prevents accidental commits of corporate configurations to public repo
+work/
+
+# Claude Code settings (local development environment)
+.claude/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Homebrew lock file (optional - can be committed or ignored based on preference)
+# 01_homebrew/Brewfile.lock.json
+
+# Local configuration overrides
+*.local
+local.*
+
+# SSH keys (should never be committed)
+**/*.pem
+**/*.key
+**/id_rsa*
+**/id_ed25519*
+
+# GPG keys
+**/*.gpg
+**/*.asc
+
+# Git submodule files that might reference private repositories
+.gitmodules
+
+# Any work-related documentation or guides
+*SUBMODULE*
+*WORK*
+*work*
+*corporate*
+*CORPORATE*
