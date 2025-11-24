@@ -41,11 +41,17 @@ done
 export DOTFILES=$HOME/.dotfiles
 
 # Set macOS defaults
-$DOTFILES/00_macos/set-defaults.sh
+echo "› setting macOS defaults"
+if ! $DOTFILES/00_macos/set-defaults.sh; then
+    echo "⚠️  macOS defaults setup failed, continuing anyway"
+fi
 
 # Install homebrew
+echo "› installing/updating homebrew"
 HOMEBREW_DIR=$DOTFILES/01_homebrew
-$HOMEBREW_DIR/install.sh 2>&1
+if ! $HOMEBREW_DIR/install.sh 2>&1; then
+    echo "⚠️  homebrew installation failed, trying to continue"
+fi
 
 # Upgrade homebrew
 echo "› brew update"
