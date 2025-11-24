@@ -49,11 +49,15 @@ $HOMEBREW_DIR/install.sh 2>&1
 
 # Upgrade homebrew
 echo "› brew update"
-brew update
+brew update || echo "⚠️  brew update failed, continuing anyway"
 
-# Upgrade homebrew
+# Install homebrew packages
 echo "› brew install Brewfile"
-brew bundle install --file="$HOMEBREW_DIR/Brewfile" 2>&1
+if ! brew bundle install --file="$HOMEBREW_DIR/Brewfile"; then
+    echo "⚠️  brew bundle install failed, trying to continue with individual installs"
+    echo "  This may result in missing applications like IDEs (IntelliJ, VS Code, etc.)"
+    echo "  You can manually run: brew bundle install --file=\"$HOMEBREW_DIR/Brewfile\""
+fi
 
 # Update work configurations if available
 if [ -d "$DOTFILES/work" ] && [ -d "$DOTFILES/work/.git" ]; then
@@ -65,7 +69,12 @@ fi
 
 # Install software
 echo "› $DOTFILES/install"
-$DOTFILES/install
+if ! $DOTFILES/install; then
+    echo "⚠️  Some install scripts may have failed"
+    echo "  Check individual install.sh scripts in numbered directories"
+else
+    echo "✅ All install scripts completed successfully"
+fi
 
 # Check for macOS updates that might require restart
 if command -v softwareupdate &> /dev/null; then
