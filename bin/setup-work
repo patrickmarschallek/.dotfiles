@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+#
+# setup-work
+#
+# Interactive script to set up the work submodule for work-specific dotfiles
+
+set -e
+
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$DOTFILES_ROOT"
+
+source "$DOTFILES_ROOT/helper.sh"
+
+info "Work Environment Setup"
+echo ""
+
+# Check if work submodule already exists
+if [ -d "work" ] && [ -d "work/.git" ]; then
+    success "Work submodule already exists"
+    echo "Location: $DOTFILES_ROOT/work"
+
+    # Show current work repository info
+    cd work
+    current_remote=$(git remote get-url origin 2>/dev/null || echo "No remote configured")
+    echo "Repository: $current_remote"
+    echo ""
+
+    info "To reconfigure, first remove the existing work submodule:"
+    echo "  bin/remove-work"
+    echo ""
+    exit 0
+fi
+
+echo "This script will help you set up work-specific dotfiles as a git submodule."
+echo "You'll need a separate git repository for your work configurations."
+echo ""
+
+# Ask for work repository URL
+while true; do
+    user "Enter your work dotfiles repository URL (or 'skip' to create directory only):"
+    read -r work_repo_url
+
+    if [[ "$work_repo_url" == "skip" ]]; then
+        break
+    elif [[ "$work_repo_url" =~ ^https?:// ]] || [[ "$work_repo_url" =~ ^git@ ]]; then
+        break
+    else
+        echo "Please enter a valid git repository URL (https:// or git@)"
+    fi
+done
+
+if [[ "$work_repo_url" == "skip" ]]; then
+    info "Creating work directory without git repository"
+    mkdir -p work
+    cd work
+
+    info "Setting up basic work directory structure"
+    mkdir -p 01_work_brew 02_work_git 03_work_zsh 05_work_tools
+
+    cat > README.md << 'EOF'
+# Work Dotfiles
+
+This directory contains work-specific configurations that are separate from personal dotfiles.
+
+## Setup
+
+To convert this to a proper git repository:
+
+1. Create a new repository on your git hosting service
+2. Initialize this directory as a git repository:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial work dotfiles"
+   git branch -M main
+   git remote add origin YOUR_REPO_URL
+   git push -u origin main
+   ```
+3. Convert to submodule in main dotfiles:
+   ```bash
+   cd ..
+   rm -rf work
+   git submodule add YOUR_REPO_URL work
+   ```
+
+## Directory Structure
+
+Follow the same numbered directory pattern as the main dotfiles:
+- `01_work_brew/` - Work-specific Homebrew packages
+- `02_work_git/` - Work git configuration
+- `03_work_zsh/` - Work shell setup
+- `05_work_tools/` - Work development tools
+
+See ../WORK_SETUP.md for detailed guidance.
+EOF
+
+    # Create example install script
+    cat > 01_work_brew/install.sh << 'EOF'
+#!/usr/bin/env bash
+#
+# Work Homebrew Setup
+
+source "$(dirname "$0")/../../helper.sh"
+
+info "Setting up work-specific Homebrew packages"
+
+# Add work-specific brew packages here
+# Example:
+# brew install awscli
+# brew install --cask slack
+
+success "Work Homebrew setup completed"
+EOF
+
+    chmod +x 01_work_brew/install.sh
+
+    success "Work directory created at: $DOTFILES_ROOT/work"
+    info "See README.md in the work directory for next steps"
+
+else
+    info "Adding work repository as git submodule"
+
+    if git submodule add "$work_repo_url" work; then
+        success "Work submodule added successfully"
+
+        # Initialize submodule if it's empty
+        cd work
+        if [ -z "$(ls -A .)" ]; then
+            info "Initializing empty work repository"
+            mkdir -p 01_work_brew 02_work_git 03_work_zsh 05_work_tools
+            echo "# Work-specific dotfiles" > README.md
+
+            git add .
+            git commit -m "Initial work dotfiles structure"
+            git push origin main || info "Could not push to remote - you may need to set up authentication"
+        fi
+
+        cd "$DOTFILES_ROOT"
+
+        # Commit the submodule addition
+        git add .gitmodules work
+        git commit -m "Add work submodule for work-specific configurations"
+
+        success "Work environment setup completed!"
+        echo ""
+        echo "Next steps:"
+        echo "1. Customize configurations in: work/"
+        echo "2. Run 'bin/dot' to apply work configurations"
+        echo "3. See WORK_SETUP.md for detailed guidance"
+
+    else
+        fail "Failed to add work submodule"
+        echo "Check that the repository URL is correct and accessible"
+        exit 1
+    fi
+fi
+
+echo ""
+info "Work setup completed. See WORK_SETUP.md for usage guidance."

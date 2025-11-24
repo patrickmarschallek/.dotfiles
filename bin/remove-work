@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+#
+# remove-work
+#
+# Script to safely remove the work submodule
+
+set -e
+
+DOTFILES_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$DOTFILES_ROOT"
+
+source "$DOTFILES_ROOT/helper.sh"
+
+info "Work Submodule Removal"
+echo ""
+
+# Check if work submodule exists
+if [ ! -d "work" ]; then
+    success "No work directory found - nothing to remove"
+    exit 0
+fi
+
+if [ ! -d "work/.git" ]; then
+    info "Work directory exists but is not a git repository"
+    user "Remove work directory? (y/N):"
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        rm -rf work
+        success "Work directory removed"
+    fi
+    exit 0
+fi
+
+echo "This will remove the work submodule from your dotfiles."
+echo "The work repository itself will not be deleted from the remote."
+echo ""
+
+# Show current work info
+cd work
+current_remote=$(git remote get-url origin 2>/dev/null || echo "No remote configured")
+echo "Current work repository: $current_remote"
+echo ""
+
+user "Are you sure you want to remove the work submodule? (y/N):"
+read -r response
+
+if [[ ! "$response" =~ ^[Yy]$ ]]; then
+    info "Work submodule removal cancelled"
+    exit 0
+fi
+
+cd "$DOTFILES_ROOT"
+
+info "Removing work submodule"
+
+# Deinitialize the submodule
+if git submodule deinit -f work 2>/dev/null; then
+    success "Work submodule deinitialized"
+else
+    info "Submodule deinit failed or was not needed"
+fi
+
+# Remove the submodule from git
+if git rm work 2>/dev/null; then
+    success "Work submodule removed from git"
+else
+    info "Git rm failed - removing directory manually"
+    rm -rf work
+fi
+
+# Remove .gitmodules file if it only contained the work submodule
+if [ -f ".gitmodules" ]; then
+    if ! grep -q "\[submodule" .gitmodules 2>/dev/null; then
+        rm .gitmodules
+        git add .gitmodules
+        info "Removed empty .gitmodules file"
+    fi
+fi
+
+# Commit the changes
+git commit -m "Remove work submodule" || info "No changes to commit"
+
+success "Work submodule removed successfully"
+echo ""
+echo "The work repository at $current_remote is still intact."
+echo "You can re-add it later with: bin/setup-work"
