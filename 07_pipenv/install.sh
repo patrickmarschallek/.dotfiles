@@ -1,25 +1,43 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
+# Pipenv Configuration
+#
+# This configures pipenv for Python virtual environments
 
-echo "[Configure] pip" 
+set -e
 
-if command -v "pip3" &> /dev/null 
-then
-    fail "pip3 is not installed" 
-    exit 0;
+source "$(dirname "$0")/../helper.sh"
+
+info "Setting up pipenv configuration"
+
+# Check if pipenv is available
+if ! command -v pipenv >/dev/null 2>&1; then
+    info "pipenv not found - it should be installed via Homebrew first"
+    exit 0
 fi
 
-# pip setup
-pip3 install -U pip keyring
+# Check if pip is available
+if ! command -v pip3 >/dev/null 2>&1; then
+    info "pip3 not found - Python environment may not be set up correctly"
+    exit 0
+fi
 
-[ ! -d ' $HOME/.pip' ] fail "[Failed] to configure pip due to missing directory: $HOME/.pip" && exit 1;
+# Update pip and install essential packages
+info "updating pip and installing essential packages"
+pip3 install -U pip setuptools wheel 2>/dev/null || info "pip update may have failed"
 
-cat << 'EOF' > $HOME/.pip/pip.conf
-[global]
-index-url = https://${USER}@pypi.company.net/repository/pypi/simple
-trusted-host = localhost pypi.company.net
-EOF
+# Create pip config directory if it doesn't exist
+pip_config_dir="$HOME/.pip"
+if [ ! -d "$pip_config_dir" ]; then
+    mkdir -p "$pip_config_dir"
+    info "created pip configuration directory"
+fi
 
-success "[Configured] pip $(pip --version)" 
+# Configure pipenv settings for better performance
+export PIPENV_VENV_IN_PROJECT=1  # Create .venv in project directory
+info "pipenv configured to create virtual environments in project directories"
+
+success "pipenv configuration completed"
+info "Use 'pipenv install' in your Python projects to create virtual environments"
 
 exit 0

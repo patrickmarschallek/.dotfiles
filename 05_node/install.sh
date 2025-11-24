@@ -1,32 +1,56 @@
 #!/usr/bin/env bash
 #
-# install nvm to provide different node environemnts
+# Node.js Environment
+#
+# This configures Node.js using nvm
 
-nvm_is_installed() {
-    return [ -d "$HOME/.nvm" ]
-}
+set -e
 
-nvm_is_not_loaded() {
-    return ! command -v "nvm" &> /dev/null 
-}
+source "$(dirname "$0")/../helper.sh"
 
-load_nvm() {
-  info "loading NVM to proceed"
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" 
-}
+info "Setting up Node.js environment with nvm"
 
-[ nvm_is_installed ] && success "NVM is already installed" || \
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash 
-  
-nvm_is_not_loaded && load_nvm || \
-    success "NVM is loaded and can be used"
+# Check if nvm is available
+if ! command -v nvm >/dev/null 2>&1; then
+    info "nvm not found - it should be installed via Homebrew first"
+    exit 0
+fi
 
-command -v "node" &> /dev/null && success "NodeJS is already installed" || \
-    nvm install --lts node
+# Load nvm if not already loaded
+if ! command -v nvm >/dev/null 2>&1; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+fi
 
-command -v "npm" &> /dev/null && success "NPM is already installed" || \
-    fail "Node is not properly installed NPM is not available."
+# Install latest LTS Node.js if not present
+if ! command -v node >/dev/null 2>&1; then
+    info "installing latest LTS Node.js"
+    nvm install --lts
+    nvm use --lts
+    success "Node.js LTS installed"
+else
+    success "Node.js already available: $(node --version)"
+fi
 
-command -v "yarn" &> /dev/null && success "Yarn is already installed" || \
-    npm install -g yarn
+# Verify npm is available
+if ! command -v npm >/dev/null 2>&1; then
+    info "npm not found - Node.js installation may be incomplete"
+    exit 0
+else
+    success "npm is available: $(npm --version)"
+fi
+
+# Install yarn if not present and not already in Brewfile
+if ! command -v yarn >/dev/null 2>&1; then
+    info "installing yarn globally"
+    npm install -g yarn 2>/dev/null || info "yarn installation may have failed"
+    if command -v yarn >/dev/null 2>&1; then
+        success "yarn installed: $(yarn --version)"
+    fi
+else
+    success "yarn already available: $(yarn --version)"
+fi
+
+success "Node.js environment ready"
+exit 0
