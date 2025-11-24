@@ -15,10 +15,27 @@ if command -v colima >/dev/null 2>&1; then
         info "starting colima"
         colima start --cpu 4 --memory 8 --disk 60 --network-address
 
-        # Link Docker socket to standard location (may need sudo)
+        # Link Docker socket to standard location (only if needed)
         if [ ! -L "/var/run/docker.sock" ] || [ ! -e "/var/run/docker.sock" ]; then
             info "linking Docker socket to /var/run/docker.sock"
-            sudo ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock 2>/dev/null || info "Docker socket linking may need manual attention"
+            info "This requires administrator privileges"
+
+            # Check if we can write to /var/run without sudo first
+            if touch /var/run/.colima-test 2>/dev/null; then
+                rm -f /var/run/.colima-test
+                ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock
+                success "Docker socket linked without sudo"
+            else
+                # Only request sudo if actually needed
+                if sudo ln -sf "$HOME/.colima/default/docker.sock" /var/run/docker.sock 2>/dev/null; then
+                    success "Docker socket linked with administrator privileges"
+                else
+                    info "Docker socket linking failed - you may need to run manually:"
+                    info "  sudo ln -sf \$HOME/.colima/default/docker.sock /var/run/docker.sock"
+                fi
+            fi
+        else
+            success "Docker socket already properly linked"
         fi
     else
         success "colima is already running"
