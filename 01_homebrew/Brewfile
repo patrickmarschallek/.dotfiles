@@ -1,68 +1,91 @@
-# repositories
-tap "homebrew/core"
-tap "homebrew/bundle"
-tap "homebrew/cask"
+# Third-party repositories (core taps are now default)
 tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "buo/cask-upgrade"
 
-# CLI tools
+# System utilities
 brew "coreutils"
-brew "c-bata/kube-prompt/kube-prompt"
+brew "gnu-sed"
+brew "htop"
+brew "watch"
+
+# Development tools
+brew "git"
+brew "git-delta"
+brew "gh"
+brew "go"
+brew "gnupg"
+brew "openssl@3"
+brew "readline"
+
+# File and data processing
 brew "dust"
-brew "exa"
+brew "eza"
 brew "ffmpeg"
 brew "fx"
 brew "fzf"
-brew "gh"
-brew "git"
-brew "git-delta"
-brew "gnu-sed"
-brew "go"
-brew "gnupg"
-brew "htop"
 brew "imagemagick"
-brew "jenv"
 brew "jq"
-brew "mas"
-brew "maven"
-brew "nvm"
-brew "openssl@1.1"
 brew "p7zip"
-brew "plantuml"
 brew "pigz"
-brew "pinentry-mac"
-brew "pipenv"
-brew "colima"
-brew "docker"
-brew "poetry"
-brew "postgresql"
-brew "pyenv"
-brew "redis"
-brew "rs/tap/dnstrace"
-brew "readline"
-brew "watch"
 brew "xsv"
 brew "yq"
+
+# Java development
+brew "jenv"
+brew "maven"
+
+# JavaScript/Node development
+brew "nvm"
 brew "yarn"
+
+# Python development
+brew "pipenv"
+brew "poetry"
+brew "pyenv"
+
+# Container and infrastructure
+brew "colima"
+brew "docker"
+brew "c-bata/kube-prompt/kube-prompt"
+brew "rs/tap/dnstrace"
+
+# Databases
+brew "postgresql"
+brew "redis"
+
+# macOS utilities
+brew "mas"
+brew "pinentry-mac"
+
+# Documentation and planning
+brew "plantuml"
 
 # AI Development Tools
 brew "claude-code"
 brew "ollama"
 
-# UI tools
-cask "hyper"
-cask "postman"
-cask "obsidian"
-cask "datagrip"
+# Development IDEs and tools
 cask "intellij-idea"
 cask "visual-studio-code"
-cask "temurin8"
+cask "datagrip"
+cask "postman"
+
+# Terminal and shell
+cask "hyper"
+
+# Java runtimes
+cask "temurin@8"
 cask "temurin11"
 cask "temurin17"
 cask "temurin21"
-cask "todoist"
+
+# Productivity and note-taking
+cask "obsidian"
 cask "logseq"
+cask "todoist-app"
+
+# System utilities and enhancements
 cask "clipy"
 cask "amethyst"
 cask "aerial"
@@ -105,7 +128,7 @@ cask "font-liberation-nerd-font"
 cask "font-meslo-lg-nerd-font"
 cask "font-monoid-nerd-font"
 cask "font-mononoki-nerd-font"
-cask "font-mplus-nerd-font"
+cask "font-m+-nerd-font"
 cask "font-noto-nerd-font"
 cask "font-open-dyslexic-nerd-font"
 cask "font-profont-nerd-font"
