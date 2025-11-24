@@ -1,6 +1,4 @@
-# Third-party repositories (core taps are now default)
-tap "homebrew/cask-fonts"
-tap "homebrew/cask-versions"
+# Third-party repositories (fonts and versions are now in core)
 tap "buo/cask-upgrade"
 
 # System utilities
