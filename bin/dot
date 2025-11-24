@@ -60,8 +60,23 @@ brew update || echo "⚠️  brew update failed, continuing anyway"
 # Install homebrew packages
 echo "› brew install Brewfile"
 if ! brew bundle install --file="$HOMEBREW_DIR/Brewfile"; then
-    echo "⚠️  brew bundle install failed, trying to continue with individual installs"
-    echo "  This may result in missing applications like IDEs (IntelliJ, VS Code, etc.)"
+    echo "⚠️  brew bundle install failed, trying individual critical casks"
+
+    # Try to install critical development tools individually
+    critical_casks=("intellij-idea" "visual-studio-code" "claude-code" "datagrip")
+    for cask in "${critical_casks[@]}"; do
+        if ! brew list --cask "$cask" &>/dev/null; then
+            echo "  › trying to install $cask individually..."
+            if brew install --cask "$cask" 2>&1; then
+                echo "    ✅ $cask installed successfully"
+            else
+                echo "    ⚠️  $cask installation failed - may need manual installation"
+            fi
+        else
+            echo "    ✅ $cask already installed"
+        fi
+    done
+
     echo "  You can manually run: brew bundle install --file=\"$HOMEBREW_DIR/Brewfile\""
 fi
 
