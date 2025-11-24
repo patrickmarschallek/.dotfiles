@@ -60,7 +60,6 @@ brew "pinentry-mac"
 brew "plantuml"
 
 # AI Development Tools
-brew "claude-code"
 brew "ollama"
 
 # Development IDEs and tools
@@ -68,6 +67,7 @@ cask "intellij-idea"
 cask "visual-studio-code"
 cask "datagrip"
 cask "postman"
+cask "claude-code"
 
 # Terminal and shell
 cask "hyper"
