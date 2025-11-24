@@ -44,6 +44,12 @@ bin/dot --edit            # Open dotfiles directory for editing
 bin/dot --help            # Show help
 ```
 
+### Work Environment Setup
+```bash
+bin/setup-work            # Interactive work submodule setup
+bin/remove-work           # Remove work submodule
+```
+
 ### Homebrew Management
 ```bash
 brew bundle install --file="01_homebrew/Brewfile"  # Install packages from Brewfile
