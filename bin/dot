@@ -97,14 +97,28 @@ else
     echo "✅ All install scripts completed successfully"
 fi
 
-# Check for macOS updates that might require restart
+# Check for macOS updates that might require restart (non-interactive)
 if command -v softwareupdate &> /dev/null; then
     echo "› checking for macOS updates"
-    if softwareupdate -l 2>/dev/null | grep -q "restart"; then
-        echo "⚠️  macOS updates require restart"
+    # Check if there are any updates available first (without sudo)
+    if softwareupdate -l 2>/dev/null | grep -E "(restart|recommended)" | grep -q "restart"; then
+        echo "⚠️  macOS updates requiring restart are available"
         echo "Installation will resume automatically after reboot if resume mechanism is active"
         echo "Run 'bin/dotfiles-resume status' to check resume configuration"
+        echo "Run 'sudo softwareupdate -i -a' to install updates when ready"
     else
-        echo "✅ no macOS updates requiring restart"
+        echo "✅ no critical macOS updates requiring restart"
     fi
 fi
+
+echo ""
+echo "🎉 Dotfiles installation completed!"
+echo ""
+echo "📋 Next Steps:"
+echo "  1. Restart your terminal or run: source ~/.zshrc"
+echo "  2. If using Hyper terminal, restart it to load new themes/plugins"
+echo "  3. Some changes may require logging out and back in"
+echo ""
+echo "🔧 Useful Commands:"
+echo "  • bin/dot          - Run this script again to update everything"
+echo "  • bin/dot --edit   - Edit dotfiles configuration"
