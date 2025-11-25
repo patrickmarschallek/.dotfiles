@@ -31,8 +31,32 @@ if [ -f "$SCRIPT_DIR/check-apps.sh" ]; then
   "$SCRIPT_DIR/check-apps.sh"
 fi
 
+# Check if Rosetta 2 is needed for Intel-based Java casks
+if [ "$(uname -p)" = "arm" ] && grep -q "temurin@8" "$SCRIPT_DIR/Brewfile"; then
+    info "Intel-based Java 8 (temurin@8) requires Rosetta 2"
+    if ! pgrep -q oahd; then
+        info "Installing Rosetta 2 for Intel compatibility"
+        softwareupdate --install-rosetta --agree-to-license 2>/dev/null || info "Rosetta 2 may already be installed"
+    else
+        success "Rosetta 2 is already available"
+    fi
+fi
+
 echo ""
 info "Installing packages from Brewfile..."
-brew bundle install --file="$SCRIPT_DIR/Brewfile"
-success "Homebrew packages installation completed"
+if brew bundle install --file="$SCRIPT_DIR/Brewfile"; then
+    success "Homebrew packages installation completed"
+else
+    # Try to continue with individual problematic packages
+    info "Some packages may have failed, checking individual status..."
+
+    # Check if critical Java packages failed and provide guidance
+    if ! brew list --cask temurin@8 >/dev/null 2>&1; then
+        info "temurin@8 installation may have failed"
+        info "You can install manually with: brew install --cask temurin@8"
+        info "Note: This requires Rosetta 2 on Apple Silicon Macs"
+    fi
+
+    success "Homebrew installation completed (some packages may need manual attention)"
+fi
 
