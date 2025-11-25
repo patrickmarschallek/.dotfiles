@@ -78,7 +78,7 @@ PATTERN_ANALYSIS.md # Project structure analysis
 - **Interactive prompts** for missing applications
 
 ### **Development Environment**
-- **Java multi-version support** (8, 11, 17, 21) via Eclipse Temurin
+- **Java multi-version support** (11, 17, 21) via Eclipse Temurin
 - **Python environment management** via pyenv, pipenv, poetry
 - **Node.js setup** with version management
 - **Container development** with Colima + Docker
@@ -102,7 +102,7 @@ PATTERN_ANALYSIS.md # Project structure analysis
 - **Container runtime**: Colima with Docker compatibility
 
 ### **Development Languages**
-- **Java**: Eclipse Temurin 8, 11, 17, 21 with jenv management
+- **Java**: Eclipse Temurin 11, 17, 21 with jenv management
 - **Python**: pyenv + pipenv + poetry for complete environment management
 - **Node.js**: nvm integration for version management
 
@@ -172,7 +172,7 @@ jenv local 11.0          # Set project-specific version
 - **Package management** helpers and aliases
 
 ### **Java Environment (05_java/)**
-- **Multiple JDK versions** (8, 11, 17, 21) via Eclipse Temurin
+- **Multiple JDK versions** (11, 17, 21) via Eclipse Temurin
 - **jenv integration** for seamless version switching
 - **Automatic registration** of all installed versions
 

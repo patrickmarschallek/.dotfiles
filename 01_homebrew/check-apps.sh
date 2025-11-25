@@ -52,7 +52,6 @@ check_brew_installed "docker"
 
 echo ""
 echo "=== Java Development ==="
-check_cask_installed "temurin8" "Eclipse Temurin 8"
 check_cask_installed "temurin11" "Eclipse Temurin 11"
 check_cask_installed "temurin17" "Eclipse Temurin 17"
 check_cask_installed "temurin21" "Eclipse Temurin 21"

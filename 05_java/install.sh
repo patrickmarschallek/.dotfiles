@@ -35,7 +35,7 @@ add_java_if_new() {
 }
 
 # Add Temurin versions (these come from the casks in Brewfile)
-for version in 8 11 17 21; do
+for version in 11 17 21; do
     add_java_if_new "/Library/Java/JavaVirtualMachines/temurin-${version}.jdk/Contents/Home" "Temurin $version"
 done
 
