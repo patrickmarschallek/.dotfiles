@@ -3,8 +3,6 @@
 # Check if applications are already installed before running brew bundle
 #
 
-set -e
-
 source "$(dirname "$0")/../helper.sh"
 
 # Function to check if a cask application is installed
@@ -52,9 +50,9 @@ check_brew_installed "docker"
 
 echo ""
 echo "=== Java Development ==="
-check_cask_installed "temurin11" "Eclipse Temurin 11"
-check_cask_installed "temurin17" "Eclipse Temurin 17"
-check_cask_installed "temurin21" "Eclipse Temurin 21"
+check_cask_installed "temurin@11" "Eclipse Temurin 11"
+check_cask_installed "temurin@17" "Eclipse Temurin 17"
+check_cask_installed "temurin@21" "Eclipse Temurin 21"
 
 echo ""
 echo "=== AI Development Tools ==="
