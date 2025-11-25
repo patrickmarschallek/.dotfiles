@@ -1,13 +1,77 @@
 #!/usr/bin/env bash
 #
-# Run all dotfiles installers.
-
-set -e
+# Run all dotfiles installers with detailed logging.
 
 cd "$(dirname $0)"
 DOTFILES_ROOT=$(pwd -P)
 
 source $DOTFILES_ROOT/helper.sh
 
-# find the installers and run them iteratively
-find . -name install.sh | sort | while read installer ; do sh -c "${installer}" ; done
+info "Running numbered directory install scripts"
+echo ""
+
+# Track installation results
+declare -a successful_installs=()
+declare -a failed_installs=()
+total_scripts=0
+
+# Find all install scripts and run them with logging
+while IFS= read -r -d '' installer; do
+    # Extract directory name for display
+    dir_name=$(dirname "$installer" | sed 's|^\./||')
+    script_name="${dir_name}/install.sh"
+
+    ((total_scripts++))
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    info "[$total_scripts] Running $script_name"
+    echo ""
+
+    # Run the install script and capture the result
+    if bash "$installer"; then
+        success "✅ $dir_name installation completed successfully"
+        successful_installs+=("$dir_name")
+    else
+        fail "❌ $dir_name installation failed"
+        failed_installs+=("$dir_name")
+        # Continue with other installs even if one fails
+    fi
+    echo ""
+
+done < <(find . -name install.sh -print0 | sort -z)
+
+# Display final summary
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+info "📋 Installation Summary"
+echo ""
+echo "Total scripts executed: $total_scripts"
+echo "Successful: ${#successful_installs[@]}"
+echo "Failed: ${#failed_installs[@]}"
+echo ""
+
+if [ ${#successful_installs[@]} -gt 0 ]; then
+    success "✅ Successful installations:"
+    for install in "${successful_installs[@]}"; do
+        echo "  • $install"
+    done
+    echo ""
+fi
+
+if [ ${#failed_installs[@]} -gt 0 ]; then
+    fail "❌ Failed installations:"
+    for install in "${failed_installs[@]}"; do
+        echo "  • $install"
+    done
+    echo ""
+    echo "💡 To debug failures, run individual install scripts:"
+    for install in "${failed_installs[@]}"; do
+        echo "   bash $install/install.sh"
+    done
+    echo ""
+
+    # Exit with error code if any installations failed
+    exit 1
+else
+    success "🎉 All installation scripts completed successfully!"
+fi

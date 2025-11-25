@@ -88,13 +88,15 @@ if [ -d "$DOTFILES/work" ] && [ -d "$DOTFILES/work/.git" ]; then
     cd "$DOTFILES"
 fi
 
-# Install software
-echo "› $DOTFILES/install"
+# Install software from numbered directories
+echo "› Running numbered directory installations"
 if ! $DOTFILES/install; then
-    echo "⚠️  Some install scripts may have failed"
-    echo "  Check individual install.sh scripts in numbered directories"
+    echo ""
+    echo "⚠️  Some numbered directory install scripts failed"
+    echo "  The install script above shows which ones failed and provides debug commands"
 else
-    echo "✅ All install scripts completed successfully"
+    echo ""
+    success "All numbered directory installations completed successfully"
 fi
 
 # Check for macOS updates that might require restart (non-interactive)
